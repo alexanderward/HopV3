@@ -1,0 +1,4 @@
+-r base.txt
+
+localstack==0.12.6.1
+ipdb==0.13.5
