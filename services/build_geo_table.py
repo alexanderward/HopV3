@@ -3,10 +3,12 @@ import dynamodbgeo
 import uuid
 
 # Import the AWS sdk and set up your DynamoDB connection
-dynamodb = boto3.client('dynamodb', region_name='us-east-1')
+from services.aws_toggle import AWS
+
+dynamodb = AWS.client('dynamodb', region_name='us-east-1')
 
 # Create an instance of GeoDataManagerConfiguration for each geospatial table you wish to interact with
-config = dynamodbgeo.GeoDataManagerConfiguration(dynamodb, 'geo_table_demo')
+config = dynamodbgeo.GeoDataManagerConfiguration(dynamodb, "places-geo-table")
 
 # Initiate a manager to query and write to the table using this config object
 geoDataManager = dynamodbgeo.GeoDataManager(config)
@@ -23,3 +25,30 @@ create_table_input["ProvisionedThroughput"]['ReadCapacityUnits']=5
 
 # Use GeoTableUtil to create the table
 table_util.create_table(create_table_input)
+# PutItemInput = {
+#         'Item': {
+#             'Country': {'S': "Tunisia"},
+#             'Capital': {'S': "Tunis"},
+#             'year': {'S': '2020'}
+#         },
+#         'ConditionExpression': "attribute_not_exists(hashKey)" # ... Anything else to pass through to `putItem`, eg ConditionExpression
+#
+# }
+# import ipdb; ipdb.set_trace()
+# geoDataManager.put_Point(dynamodbgeo.PutPointInput(
+#         dynamodbgeo.GeoPoint(36.879163, 10.243120), # latitude then latitude longitude
+#          str( uuid.uuid4()), # Use this to ensure uniqueness of the hash/range pairs.
+#          PutItemInput # pass the dict here
+#         ))
+# QueryRadiusInput={
+#         "FilterExpression": "Country = :val1",
+#         "ExpressionAttributeValues": {
+#             ":val1": {"S": "Italy"},
+#         }
+#     }
+
+bb = geoDataManager.queryRadius(
+    dynamodbgeo.QueryRadiusRequest(
+        dynamodbgeo.GeoPoint(36.879131, 10.243057), # center point
+        95, {}, sort = True))
+import ipdb; ipdb.set_trace()
