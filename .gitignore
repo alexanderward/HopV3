@@ -150,3 +150,4 @@ tfids.json
 .terraform.lock.hcl
 terraform.tfstate
 terraform.tfstate.backup
+dev/.terraform.tfstate.lock.info
