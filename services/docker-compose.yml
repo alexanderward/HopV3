@@ -39,6 +39,9 @@ services:
       - .:/code
     ports:
       - "8000:8000"
+    stdin_open: true
+    tty: true
+    restart: always
     depends_on:
       postgres:
         condition: service_healthy

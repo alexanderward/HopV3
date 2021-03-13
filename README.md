@@ -1,23 +1,12 @@
 # HopV3
 
 ## Local Dev
-1. Create virtual environment
-    -  `pip install -r services/requirements/dev.txt`
-    
-2. Localstack
+1. Start
     -  `cd services`
     -  `docker-compose up`
-    
-3. Build Services
-    - `cd services/terraform/dev`
-    -  `terraform apply -auto-approve`
- 
-4. Webapp
-    - `cd services/webapp`
-    - `python manage.py --settings=service.settings.dev`  
-    
-5. Teardown
-    - `terraform destroy -auto-approve`
+2. Debugging
+    - `docker attach services_webapp_1`
+    - use ipdb as you normally would
    
 ## Flow
 
