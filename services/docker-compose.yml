@@ -1,10 +1,76 @@
-version: '2.1'
+version: '3.9'
 
 services:
+  postgres:
+    image: postgis/postgis:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend
+
+  webapp:
+    build:
+      context: .
+      dockerfile: webapp/Dockerfile
+    command: /bin/sh -c /code/webapp/docker-entrypoint.sh
+    environment:
+      - DJANGO_SETTINGS_MODULE=service.settings.dev
+      - LOCALSTACK_FQDN=http://localstack:4566
+      - AWS_REGION=us-east-1
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASS=
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASS=mysecretpassword
+      - POSTGRES_SCHEMA=postgres
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+    networks:
+      - backend
+
+  redis:
+    image: 'docker.io/bitnami/redis:6.2-debian-10'
+    environment:
+      # ALLOW_EMPTY_PASSWORD is recommended only for development.
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    ports:
+      - '6379:6379'
+    volumes:
+      - 'redis_data:/bitnami/redis/data'
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   localstack:
-    container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
+    container_name: "${LOCALSTACK_DOCKER_NAME-localstack}"
     image: localstack/localstack
-    network_mode: bridge
     ports:
       - "4566:4566"
       - "4571:4571"
@@ -21,3 +87,20 @@ services:
     volumes:
       - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
+    healthcheck:
+      test: ["CMD-SHELL", 'curl --silent --fail localhost:4566/health | grep "\"dynamodb\": \"running\""']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - backend
+
+volumes:
+  pgdata:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  backend:
+    driver: bridge

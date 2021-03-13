@@ -145,3 +145,8 @@ insert-time.txt
 places.json
 search-time.txt
 tfids.json
+
+.terraform
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup

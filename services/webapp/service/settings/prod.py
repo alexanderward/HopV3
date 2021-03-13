@@ -1,3 +1,4 @@
-from service.settings import *
+from service.settings.base import *
+
 DEBUG = False
-AWS_REGION_NAME = "us-east-1"
+DEPLOYED = True

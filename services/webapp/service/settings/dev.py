@@ -1,3 +1,2 @@
-from service.settings import *
+from service.settings.base import *
 
-AWS_REGION_NAME = "us-east-1"

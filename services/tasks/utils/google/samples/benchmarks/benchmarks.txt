@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+Workers = 4, Record Count = 170 (places.json)
+Scrape Time: 358.59644198417664 (5.976607366402944 Minutes)
+Insert Time: 398.6065671443939 (6.643442785739898 Minute)

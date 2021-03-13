@@ -1,14 +1,17 @@
+import os
+
 import boto3
 
 
 class AWS:
     @staticmethod
-    def client(service, localstack=True, **kwargs):
+    def client(service, region_name, localstack=True, **kwargs):
         if not localstack:
-            return boto3.client(service, region_name=kwargs.get('region_name', 'us-east-1'))
+            return boto3.client(service, region_name=region_name)
         session = boto3.session.Session()
-        endpoint_url = kwargs.get('endpoint_url', "http://localhost:4566")
+        endpoint_url = kwargs.get('endpoint_url', os.environ["LOCALSTACK_FQDN"])
         return session.client(
+            region_name=region_name,
             service_name=service,
             aws_access_key_id='aaa',
             aws_secret_access_key='bbb',

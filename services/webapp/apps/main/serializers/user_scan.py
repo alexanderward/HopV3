@@ -1,9 +1,10 @@
 from rest_framework import serializers
-from apps.main.models.places import Place
-from apps.main.serializers.base import BaseSerializer
+
+from apps.main.models.user_scan import UserScan
+from apps.main.serializers.places import PlacesSerializer
 
 
-class PlacesSerializer(BaseSerializer):
+class UserScanSerializer(PlacesSerializer):
     hashKey = serializers.CharField(read_only=True)
     rangeKey = serializers.CharField(read_only=True)
     geoJson = serializers.CharField(read_only=True)
@@ -11,5 +12,5 @@ class PlacesSerializer(BaseSerializer):
     nodeData = serializers.JSONField(read_only=True)
 
     class Meta:
-        model = Place
+        model = UserScan
         fields = ["hashKey", "rangeKey", "geoJson", "geohash", "nodeData"]

@@ -1,0 +1,7 @@
+{
+  "devDependencies": {
+  },
+  "dependencies": {
+    "terraform": "^1.11.0"
+  }
+}

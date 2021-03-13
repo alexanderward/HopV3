@@ -1,8 +1,11 @@
 from collections import namedtuple
+
+from django.conf import settings
 from dynamodb_json import json_util
 import json
 import dynamodbgeo
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
@@ -89,12 +92,21 @@ class BaseGeoNoSql(BaseNoSQL):
 
 
 class GeoNoSQLListMixin(NoSQLListMixin):
-    def list(self, request, *args, **kwargs):
+    def get_geo_data_from_url(self, request):
+        lat = float(request.query_params['lat'])
+        lon = float(request.query_params['lon'])
+        radius = float(request.query_params['radius'])
+        if radius > settings.MAX_RADIUS:
+            radius = settings.MAX_RADIUS
+        return lat, lon, radius
+
+    def get_nodes(self, request, *args, **kwargs):
         if "radius" in request.query_params:
-            lat = float(request.query_params['lat'])
-            lon = float(request.query_params['lon'])
-            radius = float(request.query_params['radius'])
-            queryset = self.get_queryset(*args, lat=lat, lon=lon, radius=radius, use_base=False, **kwargs)
-            serializer = self.serializer_class(queryset, many=True)
-            return Response(serializer.data)
-        return super().list(request, *args, use_base=True, **kwargs)
+            lat, lon, radius = self.get_geo_data_from_url(request)
+            return self.get_queryset(*args, lat=lat, lon=lon, radius=radius, use_base=False, **kwargs)
+        raise ValidationError("Requests require: lat, lon, radius")
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_nodes(request, *args, **kwargs)
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)
