@@ -9,3 +9,4 @@ requests[socks]
 elasticache-auto-discovery==1.0.0
 redis==3.5.3
 psycopg2-binary
+PyYAML==5.4.1

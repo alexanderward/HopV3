@@ -17,6 +17,34 @@ services:
       retries: 5
     networks:
       - backend
+  tasks:
+    build:
+      context: .
+      dockerfile: tasks/Dockerfile
+    environment:
+      - DOCKERIZED=true
+      - DJANGO_SECRET_KEY=mysecretpassword
+      - DJANGO_SETTINGS_MODULE=service.settings.local
+      - LOCALSTACK_HOST=http://localstack:4566
+      - LOCALSTACK_PORT=4566
+      - AWS_REGION=us-east-1
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASS=
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASS=mysecretpassword
+      - POSTGRES_SCHEMA=postgres
+    volumes:
+      - .:/code
+    stdin_open: true
+    tty: true
+    depends_on:
+      webapp:
+        condition: service_started
+    networks:
+      - backend
 
   webapp:
     build:
@@ -24,8 +52,11 @@ services:
       dockerfile: webapp/Dockerfile
     command: /bin/sh -c /code/webapp/docker-entrypoint.sh
     environment:
-      - DJANGO_SETTINGS_MODULE=service.settings.dev
-      - LOCALSTACK_FQDN=http://localstack:4566
+      - DOCKERIZED=true
+      - DJANGO_SECRET_KEY=mysecretpassword
+      - DJANGO_SETTINGS_MODULE=service.settings.local
+      - LOCALSTACK_HOST=http://localstack:4566
+      - LOCALSTACK_PORT=4566
       - AWS_REGION=us-east-1
       - REDIS_HOST=redis
       - REDIS_PORT=6379

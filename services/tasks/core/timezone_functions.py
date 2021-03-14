@@ -2,7 +2,7 @@ import datetime
 
 import pytz
 
-from enums import DaysEnum
+from core.enums import DaysEnum
 
 
 def tz_offset_to_hours(offset):
@@ -71,10 +71,10 @@ def create_hour_dict(place_, record_):
 
                 open_day = DaysEnum[hour['day'].upper()].value
                 closed_day = DaysEnum[hour['day'].upper()].value
-                if open_day_offset is not 0:
+                if open_day_offset != 0:
                     open_day += open_day_offset
                     closed_day += open_day_offset
-                elif closed_day_offset is not 0:
+                elif closed_day_offset != 0:
                     closed_day += closed_day_offset
                 elif open_hour >= closed_hour:
                     closed_day += 1

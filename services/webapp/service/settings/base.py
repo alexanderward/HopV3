@@ -8,12 +8,6 @@ from service.settings.connections.elasticache import Redis
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 't3^n2@a5d2&^^$j+_^x4@7u3j9#9+!s#%j1$zfy$=vfqew(5$='
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -96,9 +90,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
-
 STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
@@ -106,17 +97,29 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [],
 }
 
-AWS_REGION_NAME = os.environ['AWS_REGION']
 DEPLOYED = False
-STACK = os.environ['DJANGO_SETTINGS_MODULE'].split('.')[-1]
-LOCALSTACK = True if STACK == 'dev' else False
+STACK = os.environ.get('DJANGO_SETTINGS_MODULE', 'service.settings.local').split('.')[-1]
+LOCALSTACK = True if STACK == 'local' else False
+if LOCALSTACK and not os.environ.get("DOCKERIZED", False):
+    from utils.local_env import set_env_vars
+    set_env_vars()
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
+AWS_REGION_NAME = os.environ['AWS_REGION']
 USER_SEARCH_AGE_OFF = timedelta(weeks=2)
 TFID_AGE_OFF = 3600 * 2  # 2 hours
 MAX_RADIUS = 16093  # 10 Miles
 
 # Services
-SSM = AWS.client('ssm', localstack=LOCALSTACK, region_name=AWS_REGION_NAME)
-DYNAMODB = AWS.client('dynamodb', localstack=LOCALSTACK, region_name=AWS_REGION_NAME)
+SSM = AWS.client('ssm', localstack=LOCALSTACK,
+                 region_name=AWS_REGION_NAME,
+                 host=os.environ['LOCALSTACK_HOST'],
+                 port=os.environ['LOCALSTACK_PORT'])
+DYNAMODB = AWS.client('dynamodb', localstack=LOCALSTACK,
+                      region_name=AWS_REGION_NAME,
+                      host=os.environ['LOCALSTACK_HOST'],
+                      port=os.environ['LOCALSTACK_PORT'])
 REDIS = Redis()
 DATABASES = {
     'default': {

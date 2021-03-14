@@ -7,7 +7,10 @@
 2. Debugging
     - `docker attach services_webapp_1`
     - use ipdb as you normally would
-   
+    
+3. Running Tasks - Adhoc
+    - `docker exec -it services_tasks_1 python <task_script_name>`
+    
 ## Flow
 
 ### New Area workflow
