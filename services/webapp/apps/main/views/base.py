@@ -91,13 +91,29 @@ class BaseGeoNoSql(BaseNoSQL):
         return json_util.loads(json.dumps(data))
 
 
+class BaseGeoRedis(GenericViewSet):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        from django.conf import settings
+        self.SMART_CACHE = settings.SMART_CACHE
+
+    def get_geo_data_from_url(self, request):
+        lat = float(request.query_params['lat'])
+        lon = float(request.query_params['lon'])
+        radius = float(request.query_params['radius'])
+        if radius > settings.MAX_SEARCH_RADIUS:
+            radius = settings.MAX_SEARCH_RADIUS
+        return lat, lon, radius
+
+
 class GeoNoSQLListMixin(NoSQLListMixin):
     def get_geo_data_from_url(self, request):
         lat = float(request.query_params['lat'])
         lon = float(request.query_params['lon'])
         radius = float(request.query_params['radius'])
-        if radius > settings.MAX_RADIUS:
-            radius = settings.MAX_RADIUS
+        if radius > settings.MAX_SEARCH_RADIUS:
+            radius = settings.MAX_SEARCH_RADIUS
         return lat, lon, radius
 
     def get_nodes(self, request, *args, **kwargs):

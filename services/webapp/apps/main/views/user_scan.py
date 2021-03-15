@@ -1,23 +1,20 @@
-from rest_framework.response import Response
+from django.conf import settings
 
-from apps.main.serializers.user_scan import UserScanSerializer
 from apps.main.utils.response import CustomResponse
-from apps.main.views.base import BaseGeoNoSql, GeoNoSQLListMixin
+from apps.main.views.base import BaseGeoRedis
 
 
-class UserScanViewset(BaseGeoNoSql,
-                      GeoNoSQLListMixin):
-    serializer_class = UserScanSerializer
-
-    def filter_results(self, model):
-        pass
+class UserScanViewset(BaseGeoRedis):
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_nodes(request, *args, **kwargs)
-        if not queryset:
-            lat, lon, radius = self.get_geo_data_from_url(request)
-
-            self.serializer_class.Meta.model().create(lat, lon, data={})
+        lat, lon, radius = self.get_geo_data_from_url(request)
+        found = self.SMART_CACHE.check_for_recent_search(lat=lat,
+                                                         lon=lon,
+                                                         radius=settings.MAX_SEARCH_RADIUS / 1000)
+        if not found:
+            # todo - add to SQS?
+            self.SMART_CACHE.add_user_search(lon=lon,
+                                             lat=lat,
+                                             expire_in=settings.USER_SEARCH_AGE_OFF_SECONDS)
             return CustomResponse.error("New scan started")
-        serializer = self.serializer_class(queryset, many=True)
-        return CustomResponse.success(serializer.data)
+        return CustomResponse.success({"message": "Area already searched recently."})

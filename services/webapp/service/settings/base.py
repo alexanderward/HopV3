@@ -4,7 +4,7 @@ import os
 from datetime import timedelta
 
 from service.settings.connections.aws import AWS
-from service.settings.connections.elasticache import Redis
+from service.settings.connections.elasticache import Redis, SmartCache
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -108,8 +108,9 @@ if LOCALSTACK and not os.environ.get("DOCKERIZED", False):
 SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 AWS_REGION_NAME = os.environ['AWS_REGION']
 USER_SEARCH_AGE_OFF = timedelta(weeks=2)
+USER_SEARCH_AGE_OFF_SECONDS = int(USER_SEARCH_AGE_OFF.total_seconds())
 TFID_AGE_OFF = 3600 * 2  # 2 hours
-MAX_RADIUS = 16093  # 10 Miles
+MAX_SEARCH_RADIUS = 16093  # 10 Miles
 
 # Services
 SSM = AWS.client('ssm', localstack=LOCALSTACK,
@@ -121,6 +122,7 @@ DYNAMODB = AWS.client('dynamodb', localstack=LOCALSTACK,
                       host=os.environ['LOCALSTACK_HOST'],
                       port=os.environ['LOCALSTACK_PORT'])
 REDIS = Redis()
+SMART_CACHE = SmartCache(REDIS)
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
