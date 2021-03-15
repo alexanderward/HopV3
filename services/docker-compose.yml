@@ -25,7 +25,7 @@ services:
       - DOCKERIZED=true
       - DJANGO_SECRET_KEY=mysecretpassword
       - DJANGO_SETTINGS_MODULE=service.settings.local
-      - LOCALSTACK_HOST=http://localstack:4566
+      - LOCALSTACK_HOST=localstack
       - LOCALSTACK_PORT=4566
       - AWS_REGION=us-east-1
       - REDIS_HOST=redis

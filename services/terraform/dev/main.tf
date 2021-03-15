@@ -12,6 +12,9 @@ provider "aws" {
   skip_requesting_account_id  = true
 
   endpoints {
+    cloudwatchlogs = "http://localstack:4566"
+    cloudwatchevents = "http://localstack:4566"
+    cloudwatch = "http://localstack:4566"
     s3     = "http://localstack:4566"
     lambda = "http://localstack:4566"
     iam    = "http://localstack:4566"
@@ -152,7 +155,7 @@ module "lambda" {
       DOCKERIZED="true"
       DJANGO_SECRET_KEY="mysecretpassword"
       DJANGO_SETTINGS_MODULE="service.settings.local"
-      LOCALSTACK_HOST="http://localstack:4566"
+      LOCALSTACK_HOST="localstack"
       LOCALSTACK_PORT=4566
       AWS_REGION="us-east-1"
       REDIS_HOST="redis"

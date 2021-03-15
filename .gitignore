@@ -152,3 +152,4 @@ terraform.tfstate
 terraform.tfstate.backup
 .terraform.tfstate.lock.info
 project.zip
+.DS_Store
