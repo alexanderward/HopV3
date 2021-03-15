@@ -7,8 +7,8 @@ variable "prefix" {
 }
 
 locals {
-  dynamo-user-search-table = "user-search-table-${var.prefix}"
-  dynamo-tfids-table = "tfids-table-${var.prefix}"
-  dynamo-places-table = "places-table-${var.prefix}"
+//  dynamo-user-search-table = "user-search-table-${var.prefix}"
+//  dynamo-tfids-table = "tfids-table-${var.prefix}"
+//  dynamo-places-table = "places-table-${var.prefix}"
 
 }

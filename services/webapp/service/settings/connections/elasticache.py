@@ -55,7 +55,8 @@ class SmartCache:
 
     def get_unexpired_geo(self, set_key, lon, lat, radius, max_boundary=31536000):
         # get keys that are within a year of expiration, but not expired
-        now = self.connection.time()[0]
+        # now = self.connection.time()[0]
+        now = int(time.time())
         unexpired_expired = set(self.connection.zrangebyscore(f"{set_key}-timeout", now, now + max_boundary))
         geo_nodes = set(self.connection.georadius(set_key, lon, lat, radius, unit="km"))
         return geo_nodes.intersection(unexpired_expired)

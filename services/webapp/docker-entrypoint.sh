@@ -4,6 +4,7 @@ set -e
 echo "Terraforming"
 cd terraform/dev
 terraform init
+terraform get
 terraform apply -auto-approve
 
 cd ../../webapp

@@ -36,6 +36,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASS=mysecretpassword
       - POSTGRES_SCHEMA=postgres
+      - SQS_USER_SEARCH=user-search-queue-dev
     volumes:
       - .:/code
     stdin_open: true
