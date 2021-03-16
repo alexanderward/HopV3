@@ -3,7 +3,7 @@
 ## Local Dev
 1. Start
     -  `cd services`
-    -  `docker-compose up`
+    -  `./run.sh`
 2. Debugging
     - `docker attach services_webapp_1`
     - use ipdb as you normally would
@@ -11,6 +11,8 @@
 3. Running Tasks - Adhoc
     - `docker exec -it services_tasks_1 python <task_script_name>`
     
+4. Invoke Lambda - Adhoc
+    - `aws lambda invoke --function-name example-lambda response.json --payload '' --endpoint=http://localhost:4566`
 ## Flow
 
 ### New Area workflow

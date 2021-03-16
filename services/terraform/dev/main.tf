@@ -151,17 +151,16 @@ module "lambda" {
 
   environment = {
     variables = {
-      EXAMPLE_VAR = "foobar"
       DOCKERIZED="true"
       DJANGO_SECRET_KEY="mysecretpassword"
       DJANGO_SETTINGS_MODULE="service.settings.local"
-      LOCALSTACK_HOST="localstack"
+      LOCALSTACK_HOST="localhost"
       LOCALSTACK_PORT=4566
       AWS_REGION="us-east-1"
-      REDIS_HOST="redis"
+      REDIS_HOST="localhost"
       REDIS_PORT=6379
       REDIS_PASS=""
-      POSTGRES_HOST="postgres"
+      POSTGRES_HOST="localhost"
       POSTGRES_PORT=5432
       POSTGRES_USER="postgres"
       POSTGRES_PASS="mysecretpassword"

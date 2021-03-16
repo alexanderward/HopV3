@@ -1,20 +1,17 @@
-# import os
-# from sys import path
-# import django
-# from multiprocessing.pool import ThreadPool
-# from core.google.config import MAP_KEYWORDS
-# from core.google.maps import Maps
-#
-# path.append('../webapp')
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "service.settings.local")
-# django.setup()
-# from service.settings.connections.elasticache import SmartCache
-#
-#
-# from service.settings.dev import REDIS
-# #
-# # # from apps.main.models.user_scan import UserScan
+import os
+from sys import path
+import django
+from multiprocessing.pool import ThreadPool
+path.append('webapp')
+path.append('tasks')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "service.settings.local")
+django.setup()
+from core.google.config import MAP_KEYWORDS
+from core.google.maps import Maps
+
+from django.conf import settings
+from service.settings.connections.elasticache import SmartCache
 
 def lambda_handler(event=None, context=None):
-    return True
+    return settings.SMART_CACHE.connection.time()
 

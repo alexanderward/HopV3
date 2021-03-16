@@ -2,8 +2,8 @@ import yaml
 import os
 
 
-def set_env_vars():
-    with open("../docker-compose.yml", 'r') as f:
+def set_env_vars(base_dir):
+    with open(os.path.join(base_dir, "../../docker-compose.yml"), 'r') as f:
         data = yaml.full_load(f)
 
     for item in data['services']['webapp']['environment']:

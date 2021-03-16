@@ -102,7 +102,7 @@ STACK = os.environ.get('DJANGO_SETTINGS_MODULE', 'service.settings.local').split
 LOCALSTACK = True if STACK == 'local' else False
 if LOCALSTACK and not os.environ.get("DOCKERIZED", False):
     from utils.local_env import set_env_vars
-    set_env_vars()
+    set_env_vars(BASE_DIR)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
